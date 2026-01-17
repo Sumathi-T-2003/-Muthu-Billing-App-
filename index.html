@@ -3,89 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MUTHU MOBILES | Digital Billing</title>
+    <title>MUTHU MOBILES | Tax Invoice</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
     <style>
-        :root { --red: #b22222; --green: #25D366; --dark: #333; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 10px; }
-        .invoice-card { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .header { display: flex; justify-content: space-between; border-bottom: 4px solid var(--red); padding-bottom: 10px; margin-bottom: 20px; }
-        .brand h1 { color: var(--red); margin: 0; font-size: 28px; }
-        .brand-sub { font-size: 11px; color: #666; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .box h4 { margin: 0 0 5px 0; font-size: 12px; color: var(--red); }
-        input, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: var(--dark); color: white; padding: 10px; font-size: 12px; text-align: left; }
-        td { padding: 8px; border-bottom: 1px solid #eee; }
-        .footer-area { display: flex; justify-content: space-between; margin-top: 20px; }
-        .totals { width: 40%; background: #fff8f8; padding: 15px; border-radius: 5px; }
-        .total-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
-        .grand-total { font-size: 18px; font-weight: bold; color: var(--red); border-top: 1px solid var(--red); padding-top: 10px; }
-        .actions { text-align: center; margin-top: 30px; }
-        .btn { padding: 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; width: 100%; font-size: 16px; }
-        .btn-add { background: var(--dark); margin-bottom: 20px; }
-        .btn-share { background: var(--green); }
-        @media print { .no-print { display: none !important; } }
+        :root { --red: #b22222; --dark: #333; }
+        body { font-family: 'Arial', sans-serif; background: #f0f2f5; margin: 0; padding: 10px; }
+        .invoice-card { max-width: 850px; margin: auto; background: white; padding: 30px; border-radius: 4px; border: 1px solid #ddd; position: relative; }
+        
+        .header { display: flex; justify-content: space-between; border-bottom: 3px solid var(--red); padding-bottom: 10px; margin-bottom: 15px; }
+        .brand h1 { color: var(--red); margin: 0; font-size: 28px; letter-spacing: 1px; }
+        .brand p { font-size: 11px; margin: 2px 0; color: #444; }
+        .tax-invoice-label { font-size: 10px; color: #666; font-weight: bold; text-align: right; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #000; margin-bottom: 15px; }
+        .info-box { padding: 8px; border: 0.5px solid #000; font-size: 12px; }
+        .info-box h4 { margin: 0 0 5px 0; font-size: 11px; text-transform: uppercase; background: #eee; padding: 2px 5px; }
+        .info-input { width: 100%; border: none; font-size: 12px; outline: none; background: transparent; }
+
+        table { width: 100%; border-collapse: collapse; border: 1px solid #000; }
+        th { background: var(--dark); color: white; padding: 8px; font-size: 11px; text-align: left; border: 1px solid #000; }
+        td { padding: 6px; border: 1px solid #000; font-size: 12px; }
+        .item-input { width: 100%; border: none; font-size: 12px; outline: none; }
+
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr; border: 1px solid #000; border-top: none; }
+        .terms { padding: 10px; font-size: 10px; border-right: 1px solid #000; }
+        .totals-box { padding: 10px; font-size: 12px; background: #fdfdfd; }
+        .total-row { display: flex; justify-content: space-between; padding: 3px 0; }
+        .grand-total { border-top: 2px solid #000; font-weight: bold; font-size: 15px; margin-top: 5px; padding-top: 5px; color: var(--red); }
+
+        .amt-words { border-top: 1px dashed #000; padding: 10px; font-size: 11px; font-style: italic; font-weight: bold; }
+
+        .no-print { text-align: center; margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
+        .btn { padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; font-size: 14px; }
+        .btn-add { background: #555; }
+        .btn-share { background: #25D366; }
+        .btn-del { background: #ff4d4d; color: white; border: none; padding: 2px 5px; font-size: 10px; border-radius: 3px; cursor: pointer; }
+
+        @media print { .no-print, .btn-del { display: none !important; } .invoice-card { border: none; box-shadow: none; width: 100%; } }
     </style>
 </head>
 <body>
 
 <div class="invoice-card" id="bill-area">
+    <div class="tax-invoice-label">TAX INVOICE | ORIGINAL FOR RECIPIENT</div>
     <div class="header">
         <div class="brand">
             <h1>MUTHU MOBILES</h1>
-            <div class="brand-sub">
-                Meenakshi bazar, Madurai | Mob: 8675007409<br>
-                GSTIN: 33GQCPS0946B1Z2
-            </div>
+            <p>scoot road, Meanakshi bazar, Tamil Nadu, 625001</p>
+            <p>Mobile: 8675007409 | GSTIN: 33GQCPS0946B1Z2</p>
         </div>
         <div style="text-align: right; font-size: 12px;">
-            Date: <input type="date" id="invDate" style="width: auto; border:none;"><br>
-            Inv: <input type="text" id="invNo" value="#001" style="width: 50px; border:none; font-weight:bold;">
+            Invoice No: <input type="text" value="#006" style="width:50px; font-weight:bold; border:none;"><br>
+            Date: <input type="date" id="invDate" style="border:none;">
         </div>
     </div>
 
-    <div class="grid">
-        <div class="box">
-            <h4>CUSTOMER DETAILS</h4>
-            <input type="text" id="custName" placeholder="Name & Phone">
+    <div class="info-grid">
+        <div class="info-box">
+            <h4>BILL TO</h4>
+            <textarea class="info-input" placeholder="Customer Name & Address" rows="3"></textarea>
         </div>
-        <div class="box">
-            <h4>REMARKS</h4>
-            <input type="text" id="notes" placeholder="IMEI / Model Name">
+        <div class="info-box">
+            <h4>SHIP TO</h4>
+            <textarea class="info-input" placeholder="Shipping Address" rows="3"></textarea>
         </div>
     </div>
 
     <table>
         <thead>
             <tr>
-                <th style="width: 50%;">ITEM</th>
-                <th style="width: 15%;">QTY</th>
+                <th style="width: 50%;">ITEM DESCRIPTION</th>
+                <th style="width: 10%;">QTY</th>
                 <th style="width: 15%;">RATE (Incl)</th>
-                <th style="width: 20%; text-align: right;">TOTAL</th>
+                <th style="width: 20%; text-align: right;">TOTAL AMT</th>
+                <th class="no-print" style="width: 5%;"></th>
             </tr>
         </thead>
         <tbody id="billBody"></tbody>
     </table>
-    
-    <button class="btn btn-add no-print" onclick="addRow()">+ Add New Item</button>
 
-    <div class="footer-area">
-        <div style="font-size: 10px; color: #999; width: 50%;">
-            * Prices inclusive of 18% GST.<br>
-            * Computer generated bill.
+    <div class="no-print" style="margin: 10px 0;">
+        <button class="btn btn-add" onclick="addRow()">+ ADD ITEM</button>
+    </div>
+
+    <div class="footer-grid">
+        <div class="terms">
+            <strong>TERMS AND CONDITIONS:</strong><br>
+            1. Goods once sold will not be taken back or exchanged.<br>
+            2. All disputes are subject to Madurai jurisdiction only.
         </div>
-        <div class="totals">
-            <div class="total-row"><span>Taxable Value:</span> <span id="taxableAmt">₹0.00</span></div>
-            <div class="total-row"><span>GST (18%):</span> <span id="gstAmt">₹0.00</span></div>
-            <div class="total-row grand-total"><span>Net Amount:</span> <span id="grandTotal">₹0.00</span></div>
+        <div class="totals-box">
+            <div class="total-row"><span>Taxable Amount:</span> <span id="taxableAmt">₹0.00</span></div>
+            <div class="total-row"><span>CGST @9%:</span> <span id="cgst">₹0.00</span></div>
+            <div class="total-row"><span>SGST @9%:</span> <span id="sgst">₹0.00</span></div>
+            <div class="grand-total total-row"><span>Total Amount:</span> <span id="grandTotal">₹0.00</span></div>
         </div>
+    </div>
+    <div class="amt-words">
+        Amount in Words: <span id="wordAmt">Zero Only</span>
     </div>
 </div>
 
-<div class="actions no-print">
+<div class="no-print">
     <button class="btn btn-share" onclick="saveAndShare()">📤 GENERATE BILL & SHARE ON WHATSAPP</button>
 </div>
 
@@ -95,10 +114,11 @@
     function addRow() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" class="p-name" placeholder="Item Name"></td>
-            <td><input type="number" class="p-qty" value="1" oninput="calculate()"></td>
-            <td><input type="number" class="p-rate" value="0" oninput="calculate()"></td>
-            <td style="text-align: right;">₹<span class="p-line-total">0.00</span></td>
+            <td><input type="text" class="item-input p-name" placeholder="e.g. Samsung S24"></td>
+            <td><input type="number" class="item-input p-qty" value="1" oninput="calculate()"></td>
+            <td><input type="number" class="item-input p-rate" value="0" oninput="calculate()"></td>
+            <td style="text-align: right; font-weight: bold;">₹<span class="p-total">0.00</span></td>
+            <td class="no-print"><button class="btn-del" onclick="this.parentElement.parentElement.remove(); calculate();">X</button></td>
         `;
         document.getElementById('billBody').appendChild(tr);
     }
@@ -109,18 +129,22 @@
             const q = Number(row.querySelector('.p-qty').value) || 0;
             const r = Number(row.querySelector('.p-rate').value) || 0;
             const line = q * r;
-            row.querySelector('.p-line-total').innerText = line.toFixed(2);
+            row.querySelector('.p-total').innerText = line.toLocaleString('en-IN', {minimumFractionDigits: 2});
             total += line;
         });
+
         const taxable = total / 1.18;
-        const gst = total - taxable;
-        document.getElementById('taxableAmt').innerText = "₹" + taxable.toFixed(2);
-        document.getElementById('gstAmt').innerText = "₹" + gst.toFixed(2);
-        document.getElementById('grandTotal').innerText = "₹" + total.toFixed(2);
+        const gstTotal = total - taxable;
+        
+        document.getElementById('taxableAmt').innerText = "₹" + taxable.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('cgst').innerText = "₹" + (gstTotal / 2).toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('sgst').innerText = "₹" + (gstTotal / 2).toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('grandTotal').innerText = "₹" + total.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        
+        document.getElementById('wordAmt').innerText = numberToWords(Math.round(total)) + " Rupees Only";
     }
 
-    // Auto-Save to MongoDB Function
-    async function autoSaveData() {
+    async function autoSave() {
         const rows = document.querySelectorAll('#billBody tr');
         for (let row of rows) {
             const item = {
@@ -136,40 +160,49 @@
                 });
             }
         }
-        console.log("Data saved to Cloud.");
     }
 
     async function saveAndShare() {
-        // 1. First Auto-save to Cloud
-        await autoSaveData();
-
-        // 2. Prepare PDF
+        await autoSave();
         const element = document.getElementById('bill-area');
         const opt = {
-            margin: 0.3,
-            filename: 'Muthu_Bill.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
+            margin: 0.2,
+            filename: 'MuthuMobiles_Bill.pdf',
+            image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 3 },
             jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
 
-        try {
-            const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
-            const file = new File([pdfBlob], "Muthu_Mobiles_Bill.pdf", { type: "application/pdf" });
+        const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
+        const file = new File([pdfBlob], "Bill.pdf", { type: "application/pdf" });
 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({
-                    files: [file],
-                    title: 'Muthu Mobiles Bill',
-                });
-            } else {
-                html2pdf().set(opt).from(element).save();
-                alert("Bill Saved to Cloud & PDF Downloaded!");
-            }
-        } catch (err) {
-            alert("Error in sharing. PDF downloaded instead.");
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: 'Muthu Mobiles Bill' });
+        } else {
             html2pdf().set(opt).from(element).save();
         }
+    }
+
+    function numberToWords(number) {
+        const first = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        const mad = ['', 'Thousand', 'Lakh', 'Crore'];
+        let word = '';
+        
+        for (let i = 0; i < mad.length; i++) {
+            let tempNumber = number % (i == 0 ? 1000 : 100);
+            if (Math.floor(tempNumber) > 0) {
+                if (i == 0) {
+                    word = first[Math.floor(tempNumber % 100)] || (tens[Math.floor(tempNumber % 100 / 10)] + ' ' + first[Math.floor(tempNumber % 10)]);
+                    if (Math.floor(tempNumber / 100) > 0) word = first[Math.floor(tempNumber / 100)] + ' Hundred ' + word;
+                } else {
+                    let part = first[Math.floor(tempNumber)] || (tens[Math.floor(tempNumber / 10)] + ' ' + first[Math.floor(tempNumber % 10)]);
+                    word = part + ' ' + mad[i] + ' ' + word;
+                }
+            }
+            number = Math.floor(number / (i == 0 ? 1000 : 100));
+        }
+        return word || 'Zero';
     }
 
     addRow();
