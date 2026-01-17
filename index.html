@@ -3,201 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MUTHU MOBILES | Premium Tax Invoice</title>
+    <title>MUTHU MOBILES | Tax Invoice</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root { --brand-red: #D32F2F; --deep-black: #1A1A1A; --soft-gray: #F8F9FA; --border-bold: #222; }
-        body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; background: #e0e4e8; margin: 0; padding: 15px; color: #222; }
+        :root { --red: #D32F2F; --black: #000000; --gray: #f2f2f2; }
+        body { font-family: 'Arial', sans-serif; background: #d1d5db; margin: 0; padding: 20px; color: #000; }
         
-        .invoice-card { 
-            max-width: 850px; margin: auto; background: white; padding: 40px; 
-            border: 2px solid var(--border-bold); box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
-            position: relative; border-radius: 2px;
+        /* Main Invoice Sheet */
+        .bill-book { 
+            max-width: 800px; margin: auto; background: white; padding: 40px; 
+            border: 2px solid #000; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.2);
         }
 
-        /* Top Header Section */
-        .tax-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; border-bottom: 5px solid var(--brand-red); padding-bottom: 15px; }
-        .brand-logo h1 { margin: 0; font-size: 36px; font-weight: 900; color: var(--brand-red); letter-spacing: -1px; }
-        .brand-logo p { margin: 3px 0; font-size: 12px; font-weight: 600; line-height: 1.4; color: #444; }
-        .invoice-meta { text-align: right; font-size: 13px; font-weight: bold; }
-        .meta-field { margin-bottom: 8px; }
-        .meta-field input { border: none; border-bottom: 1px solid #ccc; padding: 2px 5px; font-weight: bold; font-family: inherit; width: 100px; outline: none; text-align: right; }
+        .tax-top { text-align: right; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        
+        /* Header Section */
+        .header-main { display: flex; justify-content: space-between; border-bottom: 4px solid var(--red); padding-bottom: 15px; margin-bottom: 20px; }
+        .shop-details h1 { color: var(--red); margin: 0; font-size: 35px; font-weight: 900; letter-spacing: -1px; }
+        .shop-details p { font-size: 13px; margin: 2px 0; font-weight: 600; }
+
+        .bill-info { text-align: right; font-size: 14px; font-weight: bold; }
+        .bill-info div { margin-bottom: 8px; }
+        .bill-info input { border: none; border-bottom: 1px solid #000; font-weight: bold; width: 120px; text-align: right; outline: none; }
 
         /* Address Grid */
-        .address-container { display: grid; grid-template-columns: 1fr 1fr; border: 1.5px solid var(--border-bold); margin-bottom: 20px; }
-        .address-box { padding: 12px; border-right: 1.5px solid var(--border-bold); }
-        .address-box:last-child { border-right: none; }
-        .address-box h4 { margin: 0 0 10px 0; font-size: 12px; text-transform: uppercase; background: var(--deep-black); color: white; padding: 5px 10px; display: inline-block; }
-        .address-box textarea { width: 100%; border: none; font-size: 13px; font-weight: 500; outline: none; background: transparent; resize: none; font-family: inherit; }
+        .grid-box { display: grid; grid-template-columns: 1fr 1fr; border: 2px solid #000; margin-bottom: 20px; }
+        .address-area { padding: 12px; border-right: 2px solid #000; }
+        .address-area:last-child { border-right: none; }
+        .address-area label { display: block; background: #000; color: #fff; font-size: 11px; padding: 3px 10px; width: fit-content; margin-bottom: 8px; font-weight: bold; }
+        .address-area textarea { width: 100%; border: none; font-size: 14px; outline: none; background: transparent; resize: none; font-weight: 500; font-family: inherit; }
 
-        /* Table Design */
-        table { width: 100%; border-collapse: collapse; border: 1.5px solid var(--border-bold); }
-        thead th { background: var(--deep-black); color: white; padding: 12px 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #444; text-align: left; }
-        tbody td { padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-size: 14px; }
-        .item-row input { width: 100%; border: none; font-size: 14px; font-weight: 600; outline: none; padding: 5px; }
-        .qty-rate input { text-align: center; }
-
-        /* Footer Layout */
-        .bottom-grid { display: grid; grid-template-columns: 1.5fr 1fr; border: 1.5px solid var(--border-bold); border-top: none; }
-        .terms-section { padding: 20px; border-right: 1.5px solid var(--border-bold); font-size: 11px; color: #555; }
-        .terms-section h5 { margin: 0 0 8px 0; color: #000; font-size: 12px; text-decoration: underline; }
+        /* Professional Table - No HSN */
+        table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
+        thead th { background: #000 !important; color: #fff !important; padding: 12px 10px; font-size: 12px; text-transform: uppercase; border: 1px solid #333; }
+        tbody td { padding: 12px 10px; border: 1px solid #000; vertical-align: middle; font-size: 14px; font-weight: 600; }
         
-        .totals-section { background: var(--soft-gray); }
-        .calc-row { display: flex; justify-content: space-between; padding: 10px 20px; border-bottom: 1px solid #ddd; font-size: 13px; font-weight: 600; }
-        .grand-total-row { background: var(--deep-black); color: white; padding: 15px 20px; font-size: 18px; font-weight: 900; }
+        .item-row input { width: 100%; border: none; outline: none; font-size: 14px; font-weight: 600; background: transparent; }
+        .center-text { text-align: center; }
+        .right-text { text-align: right; padding-right: 15px; }
 
-        /* Amount in Words - Alignment Fixed to Left */
-        .words-container { border: 1.5px solid var(--border-bold); border-top: none; padding: 15px 20px; text-align: left; background: #fff; display: flex; align-items: center; }
-        .words-container strong { font-size: 12px; margin-right: 10px; color: var(--brand-red); text-transform: uppercase; }
-        #wordAmt { font-size: 13px; font-weight: 800; color: var(--deep-black); text-transform: uppercase; }
-
-        /* Actions */
-        .no-print { text-align: center; margin-top: 35px; display: flex; justify-content: center; gap: 20px; }
-        .btn { padding: 16px 35px; border: none; border-radius: 4px; cursor: pointer; font-weight: 800; font-size: 16px; transition: 0.2s transform; text-transform: uppercase; }
-        .btn-add { background: #555; color: white; margin-bottom: 15px; }
-        .btn-share { background: #25D366; color: white; box-shadow: 0 5px 15px rgba(37,211,102,0.4); }
-        .btn-share:hover { transform: translateY(-2px); }
+        /* Footer Alignment */
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr; border: 2px solid #000; border-top: none; }
+        .terms-box { padding: 15px; border-right: 2px solid #000; font-size: 11px; line-height: 1.4; }
+        .terms-box strong { text-decoration: underline; display: block; margin-bottom: 5px; }
         
-        /* Delete Button Alignment */
-        .del-btn { background: #ff4444; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; margin: auto; transition: 0.2s; }
-        .del-btn:hover { background: #cc0000; }
+        .totals-column { background: var(--gray); }
+        .total-row { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid #ccc; font-size: 14px; font-weight: 700; }
+        .net-total { background: #000 !important; color: #fff !important; font-size: 18px; padding: 15px; border: none; }
 
-        @media print { .no-print, .del-btn { display: none !important; } body { padding: 0; } .invoice-card { box-shadow: none; border: 2px solid #000; } }
+        /* Amount in Words - Exactly on Right Side */
+        .words-wrap { border: 2px solid #000; border-top: none; padding: 15px; text-align: right; background: #fff; }
+        .words-wrap span { font-size: 12px; font-weight: 800; text-transform: uppercase; color: #000; border-bottom: 1px solid #000; }
+
+        /* Utility Buttons */
+        .action-area { text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 20px; }
+        .btn { padding: 15px 30px; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; border-radius: 5px; }
+        .btn-add { background: #555; color: white; margin-top: 10px; }
+        .btn-whatsapp { background: #25D366; color: white; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .del-btn { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-weight: bold; }
+
+        /* PDF & Print Logic - Hiding unwanted elements */
+        @media print { 
+            .no-print, .btn-add, .del-btn, .action-area { display: none !important; }
+            body { background: white; padding: 0; }
+            .bill-book { border: 2px solid #000; box-shadow: none; width: 100%; margin: 0; }
+        }
     </style>
 </head>
 <body>
 
-<div class="invoice-card" id="capture-area">
-    <div style="text-align: center; font-size: 9px; font-weight: bold; margin-bottom: 5px; color: #777;">TAX INVOICE | ORIGINAL FOR RECIPIENT</div>
+<div class="bill-book" id="invoice-sheet">
+    <div class="tax-top">Tax Invoice | Original</div>
     
-    <div class="tax-header">
-        <div class="brand-logo">
+    <div class="header-main">
+        <div class="shop-details">
             <h1>MUTHU MOBILES</h1>
-            <p>Scoot Road, Meanakshi Bazar, Madurai, Tamil Nadu, 625001</p>
+            <p>Scoot Road, Meanakshi Bazar, Madurai, TN - 625001</p>
             <p>GSTIN: 33GQCPS0946B1Z2 | Ph: +91 8675007409</p>
         </div>
-        <div class="invoice-meta">
-            <div class="meta-field">Inv No: <input type="text" value="#2026-001"></div>
-            <div class="meta-field">Date: <input type="date" id="billDate"></div>
+        <div class="bill-info">
+            <div>Bill No: <input type="text" value="#2026-001"></div>
+            <div>Date: <input type="date" id="today"></div>
         </div>
     </div>
 
-    <div class="address-container">
-        <div class="address-box">
-            <h4>Billing Address</h4>
-            <textarea placeholder="Enter Customer Name & Address..." rows="3"></textarea>
+    <div class="grid-box">
+        <div class="address-area">
+            <label>CUSTOMER DETAILS</label>
+            <textarea placeholder="Enter Name, Address & Phone..." rows="3"></textarea>
         </div>
-        <div class="address-box">
-            <h4>Remarks / IMEI</h4>
-            <textarea placeholder="IMEI No: 35XXXXXXXXXXXXX" rows="3"></textarea>
+        <div class="address-area">
+            <label>REMARKS / IMEI</label>
+            <textarea placeholder="IMEI: 35XXXXXXXXXXXXX" rows="3"></textarea>
         </div>
     </div>
 
     <table>
         <thead>
             <tr>
-                <th style="width: 45%;">Description of Goods</th>
-                <th style="width: 10%; text-align: center;">Qty</th>
-                <th style="width: 15%; text-align: center;">Rate (Incl)</th>
-                <th style="width: 20%; text-align: right;">Amount (₹)</th>
-                <th class="no-print" style="width: 10%; text-align: center;">Action</th>
+                <th style="width: 50%;">Description of Goods</th>
+                <th style="width: 10%;">Qty</th>
+                <th style="width: 15%;">Rate</th>
+                <th style="width: 20%; text-align: right;">Amount</th>
+                <th class="no-print" style="width: 5%;"></th>
             </tr>
         </thead>
-        <tbody id="items-list"></tbody>
+        <tbody id="bill-items">
+            </tbody>
     </table>
 
-    <div class="no-print" style="margin-top: 15px;">
-        <button class="btn btn-add" onclick="addNewRow()">+ Add New Item</button>
+    <div style="text-align: left;" class="no-print">
+        <button class="btn-add" onclick="addRow()">+ Add New Row</button>
     </div>
 
-    <div class="bottom-grid">
-        <div class="terms-section">
-            <h5>Terms & Conditions:</h5>
-            <p>1. Goods once sold will not be taken back or exchanged.</p>
-            <p>2. Warranty as per manufacturer's policy only.</p>
-            <p>3. All disputes are subject to Madurai jurisdiction.</p>
-            <p style="margin-top:15px; font-weight:bold;">For MUTHU MOBILES</p>
-            <br><br>
-            <p>Authorized Signatory</p>
+    <div class="footer-grid">
+        <div class="terms-box">
+            <strong>TERMS & CONDITIONS:</strong>
+            1. Goods once sold will not be taken back.<br>
+            2. Warranty as per Company norms.<br>
+            3. Subject to Madurai Jurisdiction.
         </div>
-        <div class="totals-section">
-            <div class="calc-row"><span>Taxable Value:</span> <span id="taxable">₹0.00</span></div>
-            <div class="calc-row"><span>CGST @9%:</span> <span id="cgst">₹0.00</span></div>
-            <div class="calc-row"><span>SGST @9%:</span> <span id="sgst">₹0.00</span></div>
-            <div class="calc-row grand-total-row"><span>TOTAL:</span> <span id="grand">₹0.00</span></div>
+        <div class="totals-column">
+            <div class="total-row"><span>Taxable Value:</span> <span id="taxable-amt">0.00</span></div>
+            <div class="total-row"><span>CGST (9%):</span> <span id="cgst-amt">0.00</span></div>
+            <div class="total-row"><span>SGST (9%):</span> <span id="sgst-amt">0.00</span></div>
+            <div class="total-row net-total"><span>NET TOTAL:</span> <span id="grand-total">0.00</span></div>
         </div>
     </div>
-    <div class="words-container">
-        <strong>Amount in Words:</strong> <span id="wordAmt">ZERO RUPEES ONLY</span>
+
+    <div class="words-wrap">
+        Amount in Words: <span id="words-display">ZERO RUPEES ONLY</span>
     </div>
 </div>
 
-<div class="no-print">
-    <button class="btn btn-share" onclick="finalizeBill()">Generate & Share on WhatsApp</button>
+<div class="action-area">
+    <button class="btn btn-whatsapp" onclick="generateInvoice()">Share Bill on WhatsApp</button>
 </div>
 
 <script>
-    document.getElementById('billDate').valueAsDate = new Date();
+    document.getElementById('today').valueAsDate = new Date();
 
-    function addNewRow() {
-        const tbody = document.getElementById('items-list');
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><input type="text" class="p-name" placeholder="Item Name / Model"></td>
-            <td class="qty-rate"><input type="number" class="p-qty" value="1" oninput="runCalc()"></td>
-            <td class="qty-rate"><input type="number" class="p-rate" value="0" oninput="runCalc()"></td>
-            <td style="text-align: right; font-weight: 800;">₹<span class="p-total">0.00</span></td>
-            <td class="no-print"><button class="del-btn" onclick="this.parentElement.parentElement.remove(); runCalc();">✕</button></td>
+    function addRow() {
+        const tbody = document.getElementById('bill-items');
+        const tr = document.createElement('tr');
+        tr.className = "item-row";
+        tr.innerHTML = `
+            <td><input type="text" class="p-name" placeholder="Mobile Model Name"></td>
+            <td class="center-text"><input type="number" class="p-qty" value="1" oninput="calculate()"></td>
+            <td class="center-text"><input type="number" class="p-rate" value="0" oninput="calculate()"></td>
+            <td class="right-text" style="font-weight:bold;">₹<span class="p-total">0.00</span></td>
+            <td class="no-print"><button class="del-btn" onclick="this.parentElement.parentElement.remove(); calculate();">✕</button></td>
         `;
-        tbody.appendChild(row);
+        tbody.appendChild(tr);
     }
 
-    function runCalc() {
-        let grandTotal = 0;
-        document.querySelectorAll('#items-list tr').forEach(row => {
-            const qty = Number(row.querySelector('.p-qty').value) || 0;
-            const rate = Number(row.querySelector('.p-rate').value) || 0;
-            const lineTotal = qty * rate;
-            row.querySelector('.p-total').innerText = lineTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            grandTotal += lineTotal;
+    function calculate() {
+        let subtotal = 0;
+        document.querySelectorAll('.item-row').forEach(row => {
+            const q = row.querySelector('.p-qty').value || 0;
+            const r = row.querySelector('.p-rate').value || 0;
+            const line = q * r;
+            row.querySelector('.p-total').innerText = line.toFixed(2);
+            subtotal += line;
         });
 
-        const taxableValue = grandTotal / 1.18;
-        const totalTax = grandTotal - taxableValue;
+        const taxable = subtotal / 1.18;
+        const gst = subtotal - taxable;
 
-        document.getElementById('taxable').innerText = "₹" + taxableValue.toLocaleString('en-IN', {minimumFractionDigits: 2});
-        document.getElementById('cgst').innerText = "₹" + (totalTax/2).toLocaleString('en-IN', {minimumFractionDigits: 2});
-        document.getElementById('sgst').innerText = "₹" + (totalTax/2).toLocaleString('en-IN', {minimumFractionDigits: 2});
-        document.getElementById('grand').innerText = "₹" + grandTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('taxable-amt').innerText = taxable.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('cgst-amt').innerText = (gst/2).toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('sgst-amt').innerText = (gst/2).toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('grand-total').innerText = subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
         
-        document.getElementById('wordAmt').innerText = toWords(Math.round(grandTotal)) + " RUPEES ONLY";
+        document.getElementById('words-display').innerText = numberToWords(Math.round(subtotal)) + " RUPEES ONLY";
     }
 
-    async function finalizeBill() {
-        // Auto-save to MongoDB first
-        const items = [];
-        document.querySelectorAll('#items-list tr').forEach(row => {
-            items.push({
+    async function generateInvoice() {
+        // Step 1: Save items to MongoDB
+        const rows = document.querySelectorAll('.item-row');
+        for (let row of rows) {
+            const itemData = {
                 name: row.querySelector('.p-name').value,
                 price: row.querySelector('.p-rate').value,
                 quantity: row.querySelector('.p-qty').value
-            });
-        });
-
-        for(let item of items) {
-            if(item.name && item.price > 0) {
+            };
+            if(itemData.name) {
                 await fetch('/api/products/add', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(item)
+                    body: JSON.stringify(itemData)
                 });
             }
         }
 
-        // Generate and Share PDF
-        const element = document.getElementById('capture-area');
+        // Step 2: Create PDF & Share
+        const element = document.getElementById('invoice-sheet');
         const opt = {
-            margin: 0.3,
+            margin: 0.2,
             filename: 'MuthuMobiles_Bill.pdf',
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 3, useCORS: true },
@@ -205,29 +207,29 @@
         };
 
         const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
-        const file = new File([pdfBlob], "Muthu_Mobiles_Bill.pdf", { type: "application/pdf" });
+        const file = new File([pdfBlob], "Muthu_Mobiles_Invoice.pdf", { type: "application/pdf" });
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: 'Invoice: Muthu Mobiles' });
+            await navigator.share({ files: [file], title: 'Invoice From Muthu Mobiles' });
         } else {
             html2pdf().set(opt).from(element).save();
         }
     }
 
-    function toWords(num) {
-        const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
-        const b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
+    function numberToWords(num) {
+        const a = ['','ONE ','TWO ','THREE ','FOUR ', 'FIVE ','SIX ','SEVEN ','EIGHT ','NINE ','TEN ','ELEVEN ','TWELVE ','THIRTEEN ','FOURTEEN ','FIFTEEN ','SIXTEEN ','SEVENTEEN ','EIGHTEEN ','NINETEEN '];
+        const b = ['', '', 'TWENTY','THIRTY','FORTY','FIFTY', 'SIXTY','SEVENTY','EIGHTY','NINETY'];
         const n = ('0000000' + num).substr(-7).match(/^(\d{2})(\d{2})(\d{2})(\d{1})$/);
         if (!n) return ''; 
         let str = '';
-        str += (Number(n[1]) != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Lakh ' : '';
-        str += (Number(n[2]) != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Thousand ' : '';
-        str += (Number(n[3]) != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Hundred ' : '';
-        str += (Number(n[4]) != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) : '';
+        str += (Number(n[1]) != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'LAKH ' : '';
+        str += (Number(n[2]) != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'THOUSAND ' : '';
+        str += (Number(n[3]) != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'HUNDRED ' : '';
+        str += (Number(n[4]) != 0) ? ((str != '') ? 'AND ' : '') + (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) : '';
         return str.trim();
     }
 
-    addNewRow();
+    addRow(); // Start with one item
 </script>
 </body>
 </html>
